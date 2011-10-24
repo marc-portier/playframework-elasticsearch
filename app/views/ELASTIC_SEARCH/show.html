@@ -53,4 +53,11 @@
 
 	</div>
 
+    #{form @resync(object._key())}
+        <p class="elasticsarchSync">
+            <input type="submit" value="&{'elasticsearch.resync', object}" />
+        </p>
+    #{/form}
+
 </div>
+

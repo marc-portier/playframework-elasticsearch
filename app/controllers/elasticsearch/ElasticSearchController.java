@@ -42,7 +42,11 @@ import play.data.validation.Password;
 import play.data.validation.Required;
 import play.db.Model;
 import play.exceptions.TemplateNotFoundException;
+import play.i18n.Messages;
 import play.modules.elasticsearch.ElasticSearch;
+import play.modules.elasticsearch.ElasticSearchDeliveryMode;
+import play.modules.elasticsearch.ElasticSearchIndexEvent;
+import play.modules.elasticsearch.ElasticSearchPlugin;
 import play.modules.elasticsearch.Query;
 import play.modules.elasticsearch.search.SearchResults;
 import play.mvc.Before;
@@ -120,7 +124,32 @@ public class ElasticSearchController extends Controller {
 			render("ELASTIC_SEARCH/show.html", type, object);
 		}
 	}
+	
+	/**
+     * Resync
+     *
+     * @param id the id of the object to resync
+     */
+    public static void resync(String id) {
+        ObjectType type = ObjectType.get(getControllerClass());
+        notFoundIfNull(type);
+        
+        Model object = type.findById(id);
+        notFoundIfNull(object);
+        
+        ElasticSearchIndexEvent evt = new ElasticSearchIndexEvent(object, ElasticSearchIndexEvent.Type.INDEX);
+        Play.plugin(ElasticSearchPlugin.class).getDeliveryMode().getHandler().handle(evt);
+        
+        flash("success", Messages.get("elasticsearch.flash.success.resync", object));
+        
+        try {
+            render(type, object);
+        } catch (TemplateNotFoundException e) {
+            render("ELASTIC_SEARCH/show.html", type, object);
+        }
+    }    
 
+    
 	// ~~~~~~~~~~~~~
 	/**
 	 * The Interface For.

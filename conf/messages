@@ -33,3 +33,6 @@ elasticsearch.delete.error=Cannot delete this object
 elasticsearch.search=Search
 elasticsearch.none=(None)
 elasticsearch.selectValue=(Please select a value)
+
+elasticsearch.resync=Resync Index for %s
+elasticsearch.flash.success.resync=Succesful registration of resync for %s
